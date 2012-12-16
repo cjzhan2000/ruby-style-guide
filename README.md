@@ -1,89 +1,10 @@
-# Prelude
+# Guava Ruby Style Guide
 
-> Style is what separates the good from the great. <br/>
-> -- Bozhidar Batsov
-
-One thing has always bothered me as Ruby developer - Python developers
-have a great programming style reference
-([PEP-8](http://www.python.org/dev/peps/pep-0008/)) and we never got
-an official guide, documenting Ruby coding style and best
-practices. And I do believe that style matters. I also believe that
-such fine fellows, like us Ruby developers, should be quite capable to
-produce this coveted document.
-
-This guide started its life as our internal company Ruby coding guidelines
-(written by yours truly). At some point I decided that the work I was
-doing might be interesting to members of the Ruby community in general
-and that the world had little need for another internal company
-guideline. But the world could certainly benefit from a
-community-driven and community-sanctioned set of practices, idioms and
-style prescriptions for Ruby programming.
-
-Since the inception of the guide I've received a lot of feedback from
-members of the exceptional Ruby community around the world. Thanks for
-all the suggestions and the support! Together we can make a resource
-beneficial to each and every Ruby developer out there.
-
-By the way, if you're into Rails you might want to check out the
-complementary
-[Ruby on Rails 3 Style Guide](https://github.com/bbatsov/rails-style-guide).
-
-# The Ruby Style Guide
-
-This Ruby style guide recommends best practices so that real-world Ruby
-programmers can write code that can be maintained by other real-world Ruby
-programmers. A style guide that reflects real-world usage gets used, and a
-style guide that holds to an ideal that has been rejected by the people it is
-supposed to help risks not getting used at all &ndash; no matter how good it is.
-
-The guide is separated into several sections of related rules. I've
-tried to add the rationale behind the rules (if it's omitted I've
-assumed that is pretty obvious).
-
-I didn't come up with all the rules out of nowhere - they are mostly
-based on my extensive career as a professional software engineer,
-feedback and suggestions from members of the Ruby community and
-various highly regarded Ruby programming resources, such as
-["Programming Ruby 1.9"](http://pragprog.com/book/ruby3/programming-ruby-1-9)
-and ["The Ruby Programming Language"](http://www.amazon.com/Ruby-Programming-Language-David-Flanagan/dp/0596516177).
-
-The guide is still a work in progress - some rules are lacking
-examples, some rules don't have examples that illustrate them clearly
-enough. In due time these issues will be addressed - just keep them in
-mind for now.
-
-You can generate a PDF or an HTML copy of this guide using
-[Transmuter](https://github.com/TechnoGate/transmuter).
-
-Translations of the guide are available in the following languages:
-
-* [Chinese Simplified](https://github.com/JuanitoFatas/ruby-style-guide/blob/master/README-zhCN.md)
-* [Chinese Traditional](https://github.com/JuanitoFatas/ruby-style-guide/blob/master/README-zhTW.md)
-
-## Table of Contents
-
-* [Source Code Layout](#source-code-layout)
-* [Syntax](#syntax)
-* [Naming](#naming)
-* [Comments](#comments)
-* [Annotations](#annotations)
-* [Classes](#classes)
-* [Exceptions](#exceptions)
-* [Collections](#collections)
-* [Strings](#strings)
-* [Regular Expressions](#regular-expressions)
-* [Percent Literals](#percent-literals)
-* [Metaprogramming](#metaprogramming)
-* [Misc](#misc)
+This guide documents our coding style and practices for Ruby programming here at Guava Software. Most of it was taken from [Bozhidar Batsov's Ruby Style Guide](https://github.com/bbatsov/ruby-style-guide), that is really awesome. We just tweaked some parts to reflect our particular preferences.
 
 ## Source Code Layout
 
-> Nearly everybody is convinced that every style but their own is
-> ugly and unreadable. Leave out the "but their own" and they're
-> probably right... <br/>
-> -- Jerry Coffin (on indentation)
-
-* Use `UTF-8` as the source file encoding.
+* Use `UTF-8` as the source file encoding. Always.
 * Use two **spaces** per indentation level. No hard tabs.
 
     ```Ruby
@@ -98,13 +19,7 @@ Translations of the guide are available in the following languages:
     end
     ```
 
-* Use Unix-style line endings. (*BSD/Solaris/Linux/OSX users are covered by default,
-  Windows users have to be extra careful.)
-    * If you're using Git you might want to add the following
-    configuration setting to protect your project from Windows line
-    endings creeping in:
-
-        $ git config --global core.autocrlf true
+* Use Unix-style line endings.
 
 * Use spaces around operators, after commas, colons and semicolons, around `{`
   and before `}`. Whitespace might be (mostly) irrelevant to the Ruby
@@ -135,29 +50,27 @@ Translations of the guide are available in the following languages:
     [1, 2, 3].length
     ```
 
-* Indent `when` as deep as `case`. I know that many would disagree
-  with this one, but it's the style established in both the "The Ruby
-  Programming Language" and "Programming Ruby".
+* Indent `when` one level inside `case`.
 
     ```Ruby
     case
-    when song.name == 'Misty'
-      puts 'Not again!'
-    when song.duration > 120
-      puts 'Too long!'
-    when Time.now.hour > 21
-      puts "It's too late"
-    else
-      song.play
+      when song.name == 'Misty'
+        puts 'Not again!'
+      when song.duration > 120
+        puts 'Too long!'
+      when Time.now.hour > 21
+        puts "It's too late"
+      else
+        song.play
     end
 
     kind = case year
-           when 1850..1889 then 'Blues'
-           when 1890..1909 then 'Ragtime'
-           when 1910..1929 then 'New Orleans Jazz'
-           when 1930..1939 then 'Swing'
-           when 1940..1950 then 'Bebop'
-           else 'Jazz'
+             when 1850..1889 then 'Blues'
+             when 1890..1909 then 'Ragtime'
+             when 1910..1929 then 'New Orleans Jazz'
+             when 1930..1939 then 'Swing'
+             when 1940..1950 then 'Bebop'
+             else 'Jazz'
            end
     ```
 
@@ -186,30 +99,13 @@ Translations of the guide are available in the following languages:
       Mailer.deliver(to: 'bob@example.com', from: 'us@example.com', subject: 'Important message', body: source.text)
     end
 
-    # bad (normal indent)
+    # good
     def send_mail(source)
       Mailer.deliver(
         to: 'bob@example.com',
         from: 'us@example.com',
         subject: 'Important message',
         body: source.text)
-    end
-
-    # bad (double indent)
-    def send_mail(source)
-      Mailer.deliver(
-          to: 'bob@example.com',
-          from: 'us@example.com',
-          subject: 'Important message',
-          body: source.text)
-    end
-
-    # good
-    def send_mail(source)
-      Mailer.deliver(to: 'bob@example.com',
-                     from: 'us@example.com',
-                     subject: 'Important message',
-                     body: source.text)
     end
     ```
 
@@ -301,24 +197,6 @@ Translations of the guide are available in the following languages:
       something_else
     end
     ```
-
-* Never use `if x: ...` - it is removed in Ruby 1.9. Use
-  the ternary operator instead.
-
-    ```Ruby
-    # bad
-    result = if some_condition: something else something_else end
-
-    # good
-    result = some_condition ? something : something_else
-    ```
-
-* Never use `if x; ...`. Use the ternary operator instead.
-
-* Use `when x then ...` for one-line cases. The alternative syntax
-  `when x: ...` is removed in Ruby 1.9.
-
-* Never use `when x; ...`. See the previous rule.
 
 * Use `&&/||` for boolean expressions, `and/or` for control flow.  (Rule
   of thumb: If you have to use outer parentheses, you are using the
@@ -661,10 +539,6 @@ you if you forget either of the rules above!
 
 ## Naming
 
-> The only real difficulties in programming are cache invalidation and
-> naming things. <br/>
-> -- Phil Karlton
-
 * Use `snake_case` for methods and variables.
 * Use `CamelCase` for classes and modules.  (Keep acronyms like HTTP,
   RFC, XML uppercase.)
@@ -807,11 +681,6 @@ at all.
 
 ## Classes
 
-* When designing class hierarchies make sure that they conform to the
-  [Liskov Substitution Principle](http://en.wikipedia.org/wiki/Liskov_substitution_principle).
-* Try to make your classes as
-  [SOLID](http://en.wikipedia.org/wiki/SOLID_(object-oriented_design\))
-  as possible.
 * Always supply a proper `to_s` method for classes that represent
   domain objects.
 
@@ -955,7 +824,7 @@ in inheritance.
 in accordance with their intended usage. Don't go off leaving
 everything `public` (which is the default). After all we're coding
 in *Ruby* now, not in *Python*.
-* Indent the `public`, `protected`, and `private` methods as much the
+* Indent the `public`, `protected`, and `private` one level off the
   method definitions they apply to. Leave one blank line above them
   and one line below them in in order to emphasize it applies to all
   methods below it.
@@ -966,12 +835,12 @@ in *Ruby* now, not in *Python*.
         # ...
       end
 
-      private
+    private
 
       def private_method
         # ...
       end
-  
+
       def another_private_method
         # ...
       end
@@ -1098,8 +967,8 @@ in *Ruby* now, not in *Python*.
     # bad
     do_something rescue nil
     ```
-    
-* Avoid using `rescue` in its modifier form.    
+
+* Avoid using `rescue` in its modifier form.
 
     ```Ruby
     # bad - this catches all StandardError exceptions
@@ -1193,8 +1062,17 @@ block.
     end
     ```
 
-* Favor the use of exceptions for the standard library over
-introducing new exception classes.
+* Create new exception classes when they mean something specific within the app domain.
+
+    ```Ruby
+    class UnseededDatabaseError < StandardError; end
+
+    def find_country_by_code(code)
+      Country.find_by_code!(code)
+    rescue ActiveRecord::RecordNotFound => e
+      raise UnseededDatabaseError, 'The country was not found. Is your database seeded?'
+    end
+    ```
 
 ## Collections
 
@@ -1261,7 +1139,7 @@ strings.
     # bad - if we make a mistake we might not spot it right away
     heroes[:batman] # => "Bruce Wayne"
     heroes[:supermann] # => nil
-    
+
     # good - fetch raises a KeyError making the problem obvious
     heroes.fetch(:supermann)
     ```
@@ -1452,63 +1330,6 @@ strings.
 * Do not mess around in core classes when writing libraries. (Do not monkey
 patch them.)
 
-* The block form of `class_eval` is preferable to the string-interpolated form.
-  - when you use the string-interpolated form, always supply `__FILE__` and `__LINE__`, so that your backtraces make sense:
-
-    ```ruby
-    class_eval 'def use_relative_model_naming?; true; end', __FILE__, __LINE__
-    ```
-
-  - `define_method` is preferable to `class_eval{ def ... }`
-
-* When using `class_eval` (or other `eval`) with string interpolation, add a comment block showing its appearance if interpolated (a practice I learned from the rails code):
-
-    ```ruby
-    # from activesupport/lib/active_support/core_ext/string/output_safety.rb
-    UNSAFE_STRING_METHODS.each do |unsafe_method|
-      if 'String'.respond_to?(unsafe_method)
-        class_eval <<-EOT, __FILE__, __LINE__ + 1
-          def #{unsafe_method}(*args, &block)       # def capitalize(*args, &block)
-            to_str.#{unsafe_method}(*args, &block)  #   to_str.capitalize(*args, &block)
-          end                                       # end
-
-          def #{unsafe_method}!(*args)              # def capitalize!(*args)
-            @dirty = true                           #   @dirty = true
-            super                                   #   super
-          end                                       # end
-        EOT
-      end
-    end
-    ```
-
-* avoid using `method_missing` for metaprogramming. Backtraces become messy; the behavior is not listed in `#methods`; misspelled method calls might silently work (`nukes.launch_state = false`). Consider using delegation, proxy, or `define_method` instead.  If you must, use `method_missing`,
-  - be sure to [also define `respond_to_missing?`](http://blog.marc-andre.ca/2010/11/methodmissing-politely.html)
-  - only catch methods with a well-defined prefix, such as `find_by_*` -- make your code as assertive as possible.
-  - call `super` at the end of your statement
-  - delegate to assertive, non-magical methods:
-
-    ```ruby
-    # bad
-    def method_missing?(meth, *args, &block)
-      if /^find_by_(?<prop>.*)/ =~ meth
-        # ... lots of code to do a find_by
-      else
-        super
-      end
-    end
-
-    # good
-    def method_missing?(meth, *args, &block)
-      if /^find_by_(?<prop>.*)/ =~ meth
-        find_by(prop, *args, &block)
-      else
-        super
-      end
-    end
-
-    # best of all, though, would to define_method as each findable attribute is declared
-    ```
-
 ## Misc
 
 * Write `ruby -w` safe code.
@@ -1540,22 +1361,4 @@ patch them.)
 * Do not mutate arguments unless that is the purpose of the method.
 * Avoid more than three levels of block nesting.
 * Be consistent. In an ideal world, be consistent with these guidelines.
-* Use common sense.
-
-# Contributing
-
-Nothing written in this guide is set in stone. It's my desire to work
-together with everyone interested in Ruby coding style, so that we could
-ultimately create a resource that will be beneficial to the entire Ruby
-community.
-
-Feel free to open tickets or send pull requests with improvements. Thanks in
-advance for your help!
-
-# Spread the Word
-
-A community-driven style guide is of little use to a community that
-doesn't know about its existence. Tweet about the guide, share it with
-your friends and colleagues. Every comment, suggestion or opinion we
-get makes the guide just a little bit better. And we want to have the
-best possible guide, don't we?
+* Use common sense and, mainly, use your :heart:.
